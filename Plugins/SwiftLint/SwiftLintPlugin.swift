@@ -11,7 +11,6 @@ struct SwiftLintPlugin: BuildToolPlugin {
                 executable: try context.tool(named: "swiftlint").path,
                 arguments: [
                     "lint",
-                    "--in-process-sourcekit",
                     "--config",
                     "\(context.package.directory.string)/.swiftlint.yml",
                     target.directory.string
