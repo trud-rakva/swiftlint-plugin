@@ -13,6 +13,8 @@ struct SwiftLintPlugin: BuildToolPlugin {
                     "lint",
                     "--config",
                     "\(context.package.directory.string)/.swiftlint.yml",
+                    "--cache-path",
+                    "\(context.pluginWorkDirectory.string)/cache",
                     target.directory.string
                 ],
                 environment: [:]
