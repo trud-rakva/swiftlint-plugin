@@ -25,6 +25,9 @@ struct SwiftLintCommandPlugin: CommandPlugin {
             swiftlintArguments.append("--strict")
         }
 
+        swiftlintArguments.append(contentsOf: [ "--cache-path", "\(context.pluginWorkDirectory.string)/cache" ])
+        swiftlintArguments.append(target.directory.string)
+                                  
         let process = try Process.run(swiftlintExecutableURL, arguments: swiftlintArguments)
         process.waitUntilExit()
 
