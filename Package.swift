@@ -22,7 +22,7 @@ let package = Package(
             capability: .command(
                 intent: .custom(
                     verb: "swiftlint",
-                    description: "Switlint."
+                    description: "Switlint Command."
                 )
             ),
             dependencies: ["SwiftLintBinary"]
