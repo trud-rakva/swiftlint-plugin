@@ -24,7 +24,7 @@ struct SwiftLintPlugin: BuildToolPlugin {
 
 }
 
-if canImport(XcodeProjectPlugin)
+#if canImport(XcodeProjectPlugin)
 import XcodeProjectPlugin
 
 extension SwiftLintPlugin: XcodeBuildToolPlugin {
