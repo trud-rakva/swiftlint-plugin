@@ -10,7 +10,7 @@ Add the SwiftLintPlugin dependency to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/adamayoung/swiftlint-plugin.git", from: "0.2.0")
+    .package(url: "https://github.com/trud-rakva/swiftlint-plugin.git", from: "1.0.0")
 ]
 ```
 
