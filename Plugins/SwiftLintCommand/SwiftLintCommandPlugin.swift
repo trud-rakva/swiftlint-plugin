@@ -5,33 +5,34 @@ import PackagePlugin
 struct SwiftLintCommandPlugin: CommandPlugin {
 
     func performCommand(context: PluginContext, arguments: [String]) throws {
-        let swiftlintTool = try context.tool(named: "swiftlint")
-        let swiftlintExecutableURL = URL(fileURLWithPath: swiftlintTool.path.string)
-        var swiftlintArguments = [
+        let tool = try context.tool(named: "swiftlint")
+        let toolURL = URL(fileURLWithPath: tool.path.string)
+        var toolArguments = [
             "lint"
         ]
 
         var argumentExtractor = ArgumentExtractor(arguments)
 
         if let configFile = argumentExtractor.extractOption(named: "config").first {
-            swiftlintArguments.append(contentsOf: ["--config", configFile])
+            toolArguments.append(contentsOf: ["--config", configFile])
         }
 
         if let reporter = argumentExtractor.extractOption(named: "reporter").first {
-            swiftlintArguments.append(contentsOf: ["--reporter", reporter])
+            toolArguments.append(contentsOf: ["--reporter", reporter])
         }
 
         if argumentExtractor.extractFlag(named: "strict") > 0 {
-            swiftlintArguments.append("--strict")
+            toolArguments.append("--strict")
         }
 
-        swiftlintArguments.append(contentsOf: [ "--cache-path", "\(context.pluginWorkDirectory.string)/cache" ])
+        toolArguments.append(contentsOf: [ "--cache-path", "\(context.pluginWorkDirectory.string)/cache" ])
                                   
-        let process = try Process.run(swiftlintExecutableURL, arguments: swiftlintArguments)
+        let process = try Process.run(toolURL, arguments: toolArguments)
         process.waitUntilExit()
 
         if process.terminationStatus != 0 {
-            Diagnostics.error("'swiftlint' failed")
+            let msg = "\(process.terminationStatus): \(process.terminationReason)"
+            Diagnostics.error("\(toolURL) command failed: \(msg)")
         }
     }
 
