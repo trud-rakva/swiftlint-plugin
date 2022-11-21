@@ -1,20 +1,18 @@
-import Foundation
 import PackagePlugin
 
 @main
 struct SwiftLintPlugin: BuildToolPlugin {
 
+    /// This entry point is called when operating on a Swift package.
     func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
-        [
+        return [
             .buildCommand(
                 displayName: "Running SwiftLint for \(target.name)",
                 executable: try context.tool(named: "swiftlint").path,
                 arguments: [
                     "lint",
-                    "--config",
-                    "\(context.package.directory.string)/.swiftlint.yml",
-                    "--cache-path",
-                    "\(context.pluginWorkDirectory.string)/cache",
+                    "--config", "\(context.package.directory.string)/.swiftlint.yml",
+                    "--cache-path", "\(context.pluginWorkDirectory.string)/cache",
                     target.directory.string
                 ],
                 environment: [:]
@@ -28,6 +26,8 @@ struct SwiftLintPlugin: BuildToolPlugin {
 import XcodeProjectPlugin
 
 extension SwiftLintPlugin: XcodeBuildToolPlugin {
+
+    /// This entry point is called when operating on an Xcode project.
     func createBuildCommands(context: XcodePluginContext, target: XcodeTarget) throws -> [Command] {
         return [
             .buildCommand(
@@ -35,10 +35,8 @@ extension SwiftLintPlugin: XcodeBuildToolPlugin {
                 executable: try context.tool(named: "swiftlint").path,
                 arguments: [
                     "lint",
-                    "--config",
-                    "\(context.xcodeProject.directory.string)/.swiftlint.yml",
-                    "--cache-path",
-                    "\(context.pluginWorkDirectory.string)/cache",
+                    "--config", "\(context.xcodeProject.directory.string)/.swiftlint.yml",
+                    "--cache-path", "\(context.pluginWorkDirectory.string)/cache",
                     context.xcodeProject.directory.string
                 ],
                 environment: [:]
