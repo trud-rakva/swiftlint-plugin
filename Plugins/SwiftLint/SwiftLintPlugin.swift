@@ -7,7 +7,7 @@ struct SwiftLintPlugin: BuildToolPlugin {
     func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
         return [
             .buildCommand(
-                displayName: "Running SwiftLint for \(target.name)",
+                displayName: "SwiftLint Build Tool Plugin execution for Swift package \(target.name)",
                 executable: try context.tool(named: "swiftlint").path,
                 arguments: [
                     "lint",
@@ -31,7 +31,7 @@ extension SwiftLintPlugin: XcodeBuildToolPlugin {
     func createBuildCommands(context: XcodePluginContext, target: XcodeTarget) throws -> [Command] {
         return [
             .buildCommand(
-                displayName: "Running SwiftLint for \(target.displayName)",
+                displayName: "SwifLint Build Tool Plugin execution for Xcode project \(target.displayName)",
                 executable: try context.tool(named: "swiftlint").path,
                 arguments: [
                     "lint",
