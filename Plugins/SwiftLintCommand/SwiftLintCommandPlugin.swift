@@ -1,4 +1,5 @@
 import PackagePlugin
+import Foundation
 
 @main
 struct SwiftLintCommandPlugin: CommandPlugin {
