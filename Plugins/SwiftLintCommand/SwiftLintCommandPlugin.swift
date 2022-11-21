@@ -5,7 +5,7 @@ struct SwiftLintCommandPlugin: CommandPlugin {
 
     /// This entry point is called when operating on a Swift package.
     func performCommand(context: PluginContext, arguments: [String]) throws {
-        print("SwiftLint Command plugin execution for Swift package \(context.package.displayName)")
+        print("SwiftLint Command Plugin execution for Swift package \(context.package.displayName)")
         
         let tool = try context.tool(named: "swiftlint")
         let toolURL = URL(fileURLWithPath: tool.path.string)
@@ -46,7 +46,7 @@ extension SwiftLintCommandPlugin XcodeCommandPlugin {
 
     /// This entry point is called when operating on an Xcode project.
     func performCommand(context: XcodePluginContext, arguments: [String]) throws {
-        print("SwifLint Command plugin execution for Xcode project \(context.xcodeProject.displayName)")
+        print("SwifLint Command Plugin execution for Xcode project \(context.xcodeProject.displayName)")
         
         let tool = try context.tool(named: "swiftlint")
         let toolURL = URL(fileURLWithPath: tool.path.string)
