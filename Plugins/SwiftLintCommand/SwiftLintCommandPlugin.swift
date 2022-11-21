@@ -42,7 +42,7 @@ struct SwiftLintCommandPlugin: CommandPlugin {
 #if canImport(XcodeProjectPlugin)
 import XcodeProjectPlugin
 
-extension SwiftLintCommandPlugin XcodeCommandPlugin {
+extension SwiftLintCommandPlugin: XcodeCommandPlugin {
 
     /// This entry point is called when operating on an Xcode project.
     func performCommand(context: XcodePluginContext, arguments: [String]) throws {
