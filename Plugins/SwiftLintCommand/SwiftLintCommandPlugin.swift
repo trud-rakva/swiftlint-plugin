@@ -12,7 +12,7 @@ struct SwiftLintCommandPlugin: CommandPlugin {
         let toolURL = URL(fileURLWithPath: tool.path.string)
         var toolArguments = [
             "lint",
-            "--cache-path", "\(context.pluginWorkDirectory.string)/cache" ]
+            "--cache-path", "\(context.pluginWorkDirectory.string)/cache"
         ]
 
         var argumentExtractor = ArgumentExtractor(arguments)
@@ -53,7 +53,7 @@ extension SwiftLintCommandPlugin: XcodeCommandPlugin {
         let toolURL = URL(fileURLWithPath: tool.path.string)
         var toolArguments = [
             "lint",
-            "--cache-path", "\(context.pluginWorkDirectory.string)/cache" ]
+            "--cache-path", "\(context.pluginWorkDirectory.string)/cache"
         ]
 
         var argumentExtractor = ArgumentExtractor(arguments)
