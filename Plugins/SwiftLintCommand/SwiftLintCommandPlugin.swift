@@ -3,37 +3,6 @@ import Foundation
 
 @main
 struct SwiftLintCommandPlugin: CommandPlugin {
-    
-    private func runCommand(cache: String, tool: String, arguments: [String]) throws {
-        let toolURL = URL(fileURLWithPath: tool)
-        var toolArguments = [
-            "lint",
-            "--cache-path", "\(cache)"
-        ]
-
-        var argumentExtractor = ArgumentExtractor(arguments)
-
-        if let configFile = argumentExtractor.extractOption(named: "config").first {
-            toolArguments.append(contentsOf: ["--config", configFile])
-        }
-
-        if let reporter = argumentExtractor.extractOption(named: "reporter").first {
-            toolArguments.append(contentsOf: ["--reporter", reporter])
-        }
-
-        if argumentExtractor.extractFlag(named: "strict") > 0 {
-            toolArguments.append("--strict")
-        }
-
-        print("run: \(toolURL) \(toolArguments)")
-        let process = try Process.run(toolURL, arguments: toolArguments)
-        process.waitUntilExit()
-
-        if process.terminationStatus != 0 {
-            let msg = "\(process.terminationStatus): \(process.terminationReason)"
-            Diagnostics.error("\(toolURL) command failed: \(msg)")
-        }
-    }
 
     /// This entry point is called when operating on a Swift package.
     func performCommand(context: PluginContext, arguments: [String]) throws {
@@ -41,8 +10,10 @@ struct SwiftLintCommandPlugin: CommandPlugin {
         print("context: \(context)")
         print("arguments: \(arguments)")
 
-        let tool = try context.tool(named: "swiftlint")
-        try runCommand(cache: context.pluginWorkDirectory.appending("cache").string, tool: tool.path.string, arguments: arguments)
+        let tool = try context.tool(named: "swiftlint").path.string
+        let cache = context.pluginWorkDirectory.appending("cache").string
+        let toolArgs = getArgs(cache: cache, arguments: arguments)
+        try runCommand(tool: tool, toolArgs: toolArgs)
     }
 
 }
@@ -57,9 +28,50 @@ extension SwiftLintCommandPlugin: XcodeCommandPlugin {
         print("SwifLint Command Plugin execution for Xcode project \(context.xcodeProject.displayName)")
         print("context: \(context)")
         print("arguments: \(arguments)")
-        
-        let tool = try context.tool(named: "swiftlint")
-        try runCommand(cache: context.pluginWorkDirectory.appending("cache").string, tool: tool.path.string, arguments: arguments)
+
+        let tool = try context.tool(named: "swiftlint").path.string
+        let cache = context.pluginWorkDirectory.appending("cache").string
+        let toolArgs = getArgs(cache: cache, arguments: arguments)
+        try runCommand(tool: tool, toolArgs: toolArgs)
     }
 }
 #endif
+
+extension SwiftLintCommandPlugin {
+
+    private func runCommand(tool: String, toolArgs: [String]) throws {
+        let toolURL = URL(fileURLWithPath: tool)
+
+        print("run: \(toolURL) \(toolArgs)")
+        let process = try Process.run(toolURL, arguments: toolArgs)
+        process.waitUntilExit()
+
+        if process.terminationStatus != 0 {
+            let msg = "[\(process.terminationStatus)] \(process.terminationReason)"
+            Diagnostics.error("\(toolURL) command failed: \(msg)")
+        }
+    }
+
+    private func getArgs(cache: String, arguments: [String]) -> [String] {
+        var args = [
+            "lint",
+            "--cache-path", "\(cache)"
+        ]
+
+        var argumentExtractor = ArgumentExtractor(arguments)
+
+        if let configFile = argumentExtractor.extractOption(named: "config").first {
+            args.append(contentsOf: ["--config", configFile])
+        }
+
+        if let reporter = argumentExtractor.extractOption(named: "reporter").first {
+            args.append(contentsOf: ["--reporter", reporter])
+        }
+
+        if argumentExtractor.extractFlag(named: "strict") > 0 {
+            args.append("--strict")
+        }
+        return args
+    }
+
+}
