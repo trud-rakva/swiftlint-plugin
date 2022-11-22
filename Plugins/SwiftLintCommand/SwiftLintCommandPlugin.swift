@@ -42,7 +42,7 @@ struct SwiftLintCommandPlugin: CommandPlugin {
         print("arguments: \(arguments)")
 
         let tool = try context.tool(named: "swiftlint")
-        try runCommand(cache: context.pluginWorkDirectory.appending("cache"), tool: tool.path.string, arguments: arguments)
+        try runCommand(cache: context.pluginWorkDirectory.appending("cache").string, tool: tool.path.string, arguments: arguments)
     }
 
 }
@@ -59,7 +59,7 @@ extension SwiftLintCommandPlugin: XcodeCommandPlugin {
         print("arguments: \(arguments)")
         
         let tool = try context.tool(named: "swiftlint")
-        try runCommand(cache: context.pluginWorkDirectory.appending("cache"), tool: tool.path.string, arguments: arguments)
+        try runCommand(cache: context.pluginWorkDirectory.appending("cache").string, tool: tool.path.string, arguments: arguments)
     }
 }
 #endif
