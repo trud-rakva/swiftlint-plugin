@@ -4,11 +4,11 @@ import Foundation
 @main
 struct SwiftLintCommandPlugin: CommandPlugin {
     
-    private func runCommand(workDir: String, tool: String, arguments: [String]) throws {
+    private func runCommand(cache: String, tool: String, arguments: [String]) throws {
         let toolURL = URL(fileURLWithPath: tool)
         var toolArguments = [
             "lint",
-            "--cache-path", "\(workDir)/cache"
+            "--cache-path", "\(cache)"
         ]
 
         var argumentExtractor = ArgumentExtractor(arguments)
@@ -42,7 +42,7 @@ struct SwiftLintCommandPlugin: CommandPlugin {
         print("arguments: \(arguments)")
 
         let tool = try context.tool(named: "swiftlint")
-        try runCommand(workDir: context.pluginWorkDirectory.string, tool: tool.path.string, arguments: arguments)
+        try runCommand(cache: context.pluginWorkDirectory.appending("cache"), tool: tool.path.string, arguments: arguments)
     }
 
 }
@@ -59,7 +59,7 @@ extension SwiftLintCommandPlugin: XcodeCommandPlugin {
         print("arguments: \(arguments)")
         
         let tool = try context.tool(named: "swiftlint")
-        try runCommand(workDir: context.pluginWorkDirectory.string, tool: tool.path.string, arguments: arguments)
+        try runCommand(cache: context.pluginWorkDirectory.appending("cache"), tool: tool.path.string, arguments: arguments)
     }
 }
 #endif
