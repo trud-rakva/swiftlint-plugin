@@ -13,7 +13,17 @@ struct SwiftLintCommandPlugin: CommandPlugin {
         let tool = try context.tool(named: "swiftlint").path.string
         let cache = context.pluginWorkDirectory.appending("cache").string
         let toolArgs = getArgs(cache: cache, arguments: arguments)
-        try runCommand(tool: tool, toolArgs: toolArgs)
+        let targetNames = getTargetNames(arguments: arguments)
+
+        if targetNames.isEmpty {
+            try runCommand(tool: tool, toolArgs: toolArgs)
+        } else {
+            let targets = try context.package.targets(named: targetNames)
+            for target in targets {
+                guard let target = target as? SourceModuleTarget else { continue }
+                try runCommand(tool: tool, toolArgs: toolArgs + [target.directory.string])
+            }
+        }
     }
 
 }
@@ -32,7 +42,17 @@ extension SwiftLintCommandPlugin: XcodeCommandPlugin {
         let tool = try context.tool(named: "swiftlint").path.string
         let cache = context.pluginWorkDirectory.appending("cache").string
         let toolArgs = getArgs(cache: cache, arguments: arguments)
-        try runCommand(tool: tool, toolArgs: toolArgs)
+        let targetNames = getTargetNames(arguments: arguments)
+
+        if targetNames.isEmpty {
+            try runCommand(tool: tool, toolArgs: toolArgs)
+        } else {
+            let targets = context.xcodeProject.targets.filter { targetNames.contains($0.displayName) }
+            for target in targets {
+                guard let target = target as? SourceModuleTarget else { continue }
+                try runCommand(tool: tool, toolArgs: toolArgs + [target.directory.string])
+            }
+        }
     }
 }
 #endif
@@ -46,7 +66,7 @@ extension SwiftLintCommandPlugin {
         let process = try Process.run(toolURL, arguments: toolArgs)
         process.waitUntilExit()
 
-        if process.terminationStatus != 0 {
+        if process.terminationStatus != 0 || process.terminationReason != .exit {
             let msg = "[\(process.terminationStatus)] \(process.terminationReason)"
             Diagnostics.error("\(toolURL) command failed: \(msg)")
         }
@@ -72,6 +92,11 @@ extension SwiftLintCommandPlugin {
             args.append("--strict")
         }
         return args
+    }
+
+    private func getTargetNames(arguments: [String]) -> [String] {
+        var argExtractor = ArgumentExtractor(arguments)
+        return argExtractor.extractOption(named: "target")
     }
 
 }
