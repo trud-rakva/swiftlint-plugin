@@ -6,7 +6,7 @@ struct SwiftLintCommandPlugin: CommandPlugin {
 
     /// This entry point is called when operating on a Swift package.
     func performCommand(context: PluginContext, arguments: [String]) throws {
-        print("SwiftLint Command Plugin execution for Swift package \(context.package.displayName)")
+        print(" -*- SwiftLint Command Plugin execution for Swift package \(context.package.displayName) -*-")
         print("context: \(context)")
         print("arguments: \(arguments)")
 
@@ -20,8 +20,9 @@ struct SwiftLintCommandPlugin: CommandPlugin {
         } else {
             let targets = try context.package.targets(named: targetNames)
             for target in targets {
-                print("processing target \(target.name)")
+                print(" * processing module target \(target.name)")
                 guard let target = target as? SourceModuleTarget else { continue }
+                print(" - processing source directory \(target.directory)")
                 try runCommand(tool: tool, toolArgs: toolArgs + [target.directory.string])
             }
         }
@@ -36,7 +37,7 @@ extension SwiftLintCommandPlugin: XcodeCommandPlugin {
 
     /// This entry point is called when operating on an Xcode project.
     func performCommand(context: XcodePluginContext, arguments: [String]) throws {
-        print("SwifLint Command Plugin execution for Xcode project \(context.xcodeProject.displayName)")
+        print(" -*- SwifLint Command Plugin execution for Xcode project \(context.xcodeProject.displayName) -*-")
         print("context: \(context)")
         print("arguments: \(arguments)")
 
@@ -48,13 +49,13 @@ extension SwiftLintCommandPlugin: XcodeCommandPlugin {
         if targetNames.isEmpty {
             try runCommand(tool: tool, toolArgs: toolArgs)
         } else {
-            print("targetNames: \(targetNames)")
-            print("targets: \(context.xcodeProject.targets)")
             let targets = context.xcodeProject.targets.filter { targetNames.contains($0.displayName) }
             for target in targets {
-                print("processing target \(target.displayName)")
-                guard let target = target as? SourceModuleTarget else { continue }
-                try runCommand(tool: tool, toolArgs: toolArgs + [target.directory.string])
+                print(" * processing Xcode target \(target.displayName)")
+                for file in target.inputFiles where file.type == .source {
+                    print(" - processing source file \(file.path)")
+                    try runCommand(tool: tool, toolArgs: toolArgs + [file.path.string])
+                }
             }
         }
     }

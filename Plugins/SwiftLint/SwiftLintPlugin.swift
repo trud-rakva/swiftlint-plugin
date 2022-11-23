@@ -9,7 +9,7 @@ struct SwiftLintPlugin: BuildToolPlugin {
         print("target: \(target)")
         return [
             .buildCommand(
-                displayName: "SwiftLint Build Tool Plugin execution for Swift package \(target.name)",
+                displayName: " -*- SwiftLint Build Tool Plugin execution for Swift package \(target.name) -*-",
                 executable: try context.tool(named: "swiftlint").path,
                 arguments: [
                     "lint",
@@ -34,7 +34,7 @@ extension SwiftLintPlugin: XcodeBuildToolPlugin {
         print("target: \(target)")
         return [
             .buildCommand(
-                displayName: "SwifLint Build Tool Plugin execution for Xcode project \(target.displayName)",
+                displayName: " -*- SwifLint Build Tool Plugin execution for Xcode project \(target.displayName) -*-",
                 executable: try context.tool(named: "swiftlint").path,
                 arguments: [
                     "lint",
