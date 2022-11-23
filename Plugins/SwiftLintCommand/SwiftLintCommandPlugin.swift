@@ -20,6 +20,7 @@ struct SwiftLintCommandPlugin: CommandPlugin {
         } else {
             let targets = try context.package.targets(named: targetNames)
             for target in targets {
+                print("processing target \(target.name)")
                 guard let target = target as? SourceModuleTarget else { continue }
                 try runCommand(tool: tool, toolArgs: toolArgs + [target.directory.string])
             }
@@ -47,8 +48,11 @@ extension SwiftLintCommandPlugin: XcodeCommandPlugin {
         if targetNames.isEmpty {
             try runCommand(tool: tool, toolArgs: toolArgs)
         } else {
+            print("targetNames: \(targetNames)")
+            print("targets: \(context.xcodeProject.targets)")
             let targets = context.xcodeProject.targets.filter { targetNames.contains($0.displayName) }
             for target in targets {
+                print("processing target \(target.displayName)")
                 guard let target = target as? SourceModuleTarget else { continue }
                 try runCommand(tool: tool, toolArgs: toolArgs + [target.directory.string])
             }
