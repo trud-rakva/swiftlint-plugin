@@ -85,7 +85,7 @@ extension SwiftLintCommandPlugin {
 
         var argumentExtractor = ArgumentExtractor(arguments)
 
-        if let configFile = argumentExtractor.extractOption(named: "config").first {
+        for configFile in argumentExtractor.extractOption(named: "config") {
             args.append(contentsOf: ["--config", configFile])
         }
 
